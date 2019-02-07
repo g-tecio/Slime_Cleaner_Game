@@ -8,10 +8,14 @@ public class PlayerMovement : MonoBehaviour
     RectTransform player;
     Button btnL, btnR, btnM;
 
+    public AudioClip SFX_changeRail;
+
     //public float xPos = 2.75f;
 
     Animator _anim;
     bool _end;
+
+    AudioSource _audio;
 
     void Awake()
     {
@@ -20,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
         btnR = GameObject.Find("Button_Right").GetComponent<Button>();
         btnM = GameObject.Find("Button_Mid").GetComponent<Button>();
         _anim = GetComponent<Animator>();
+        _audio = GetComponent<AudioSource>();
     }
 
     void Start() { _end = false; }
@@ -83,13 +88,9 @@ public class PlayerMovement : MonoBehaviour
         _end = true;
     }
 
-    /*   void LateUpdate()
-      {
-          if (_end)
-          {
-              //player.anchoredPosition = new Vector3(0, player.anchoredPosition.y, 0);
-              _end = false;
-          }
-      } */
+    public void ChangeRailSound()
+    {
+        _audio.PlayOneShot(SFX_changeRail);
+    }
 
 }

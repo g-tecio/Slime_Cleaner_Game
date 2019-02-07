@@ -5,7 +5,7 @@ using UnityEngine;
 public class Generate : MonoBehaviour
 {
     public GameObject @object;
-    public bool dirt;
+    //public bool dirt;
     GameObject clone;
     public float speedForceDown;
     //public float repeatRate;
@@ -17,8 +17,8 @@ public class Generate : MonoBehaviour
     void Awake()
     {
         //Resources search for a folder called Resources
-        if(dirt)
-            @object = Resources.Load<GameObject>("Dirt");
+        //if(dirt)
+           // @object = Resources.Load<GameObject>("Dirt");
     }
 
     void Start()
