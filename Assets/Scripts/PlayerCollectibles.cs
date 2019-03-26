@@ -8,12 +8,17 @@ public class PlayerCollectibles : MonoBehaviour
     CapsuleCollider2D _capsule;
     SpriteRenderer _spriteR;
 
+    PlayerHealth _health;
+
+    int _scoreCounter;
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Collectible")
         {
             _capsule = other.GetComponent<CapsuleCollider2D>();
             _spriteR = other.GetComponent<SpriteRenderer>();
+            _health = GameObject.Find("LifeBar").GetComponent<PlayerHealth>();
         }
     }
 
@@ -21,19 +26,26 @@ public class PlayerCollectibles : MonoBehaviour
     {
         if (other.tag == "Collectible")
         {
-           _capsule.size = new Vector2(_capsule.size.x, _capsule.size.y - consumeSpeed);
-           _spriteR.size = new Vector2(_spriteR.size.x, _spriteR.size.y - consumeSpeed);
-           GameManager.instance.currentScore++; 
-            if(_capsule.size.y <= 0 ||  _spriteR.size.y <= 0)
+            _capsule.size = new Vector2(_capsule.size.x, _capsule.size.y - consumeSpeed);
+            _spriteR.size = new Vector2(_spriteR.size.x, _spriteR.size.y - consumeSpeed);
+            //Puntuacuacion al archivo scoreText.cs
+            GameManager.instance.currentScore+=6;
+            CheckRecover(6);
+            if (_capsule.size.y <= 0 || _spriteR.size.y <= 0)
             {
                 Destroy(other.gameObject);
             }
+            
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CheckRecover(int x)
     {
-
+        _scoreCounter += x;
+        if (_scoreCounter >= 348)
+        {
+            _scoreCounter = 0;
+            _health.Damage_Health(1);
+        }
     }
 }

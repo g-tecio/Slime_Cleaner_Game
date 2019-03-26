@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,11 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
     public float currentScore;
     public float highScore;
+    
     // Start is called before the first frame update
-    void Awake()
+    
+    
+        void Awake()
     {
         if(instance == null)
         {
@@ -20,5 +24,10 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    void Start()
+    {
+        //PlayerPrefs.DeleteAll();
     }
 }

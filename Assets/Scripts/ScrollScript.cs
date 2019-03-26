@@ -17,6 +17,7 @@ public class ScrollScript : MonoBehaviour
         if (raw)
         {
             img.uvRect = new Rect(0, Time.time * speed, 1, 1);
+           
         }
 
         else if (vertical)

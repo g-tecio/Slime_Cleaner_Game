@@ -6,16 +6,19 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     RectTransform player;
-    Button btnL, btnR, btnM;
+    public Button btnL, btnR, btnM;
 
     public AudioClip SFX_changeRail;
 
     //public float xPos = 2.75f;
 
     Animator _anim;
-    bool _end;
 
     AudioSource _audio;
+
+    PlayerHealth _health;
+
+    float currentTime;
 
     void Awake()
     {
@@ -25,72 +28,103 @@ public class PlayerMovement : MonoBehaviour
         btnM = GameObject.Find("Button_Mid").GetComponent<Button>();
         _anim = GetComponent<Animator>();
         _audio = GetComponent<AudioSource>();
+        _health = GameObject.FindObjectOfType<PlayerHealth>();
     }
 
-    void Start() { _end = false; }
+    public void DisableButtons()
+    {
+        btnR.enabled = false;
+        btnL.enabled = false;
+        btnM.enabled = false;
+        var btnPlayer = GetComponent<Button>();
+        btnPlayer.interactable = false;
+    }
+
+    public void EnableButtons()
+    {
+        btnR.enabled = true;
+        btnL.enabled = true;
+        btnM.enabled = true;
+        var btnPlayer = GetComponent<Button>();
+        btnPlayer.interactable = true;
+    }
 
     public void MidButton()
     {
-        if (0 < player.position.x)
+        if (_anim.GetCurrentAnimatorStateInfo(0).IsName("SlimeIdle"))
         {
-            _anim.SetInteger("AnimState", 2);
-            StartCoroutine(waitAnimation("ISlimeChangeRailRight"));
+            gameObject.layer = 12;
+            if (0 < player.position.x)
+            {
+                _anim.SetInteger("AnimState", 2);
+                StartCoroutine(waitAnimation("ISlimeChangeRailRight"));
+            }
+            else if (0 > player.position.x)
+            {
+                _anim.SetInteger("AnimState", -2);
+                StartCoroutine(waitAnimation("ISlimeChangeRailAnimLeft"));
+            }
+            btnR.enabled = true;
+            btnL.enabled = true;
+            btnM.enabled = false;
         }
-        else if (0 > player.position.x)
-        {
-            _anim.SetInteger("AnimState", -2);
-            StartCoroutine(waitAnimation("ISlimeChangeRailAnimLeft"));
-        }
-        btnR.enabled = true;
-        btnL.enabled = true;
-        btnM.enabled = false;
+
+    }
+
+    public void ChangeState(int state)
+    {
+        _anim.SetInteger("AnimState", state);
+        if (!_health.inHit)
+            gameObject.layer = 8;
     }
 
 
     public void LeftButton()
     {
-        _anim.SetInteger("AnimState", -1);
-        StartCoroutine(waitAnimation(btnL, "SlimeChangeRailAnimLeft"));
-        btnR.enabled = false;
-        btnL.enabled = false;
-        btnM.enabled = true;
+        if (_anim.GetCurrentAnimatorStateInfo(0).IsName("SlimeIdle"))
+        {
+            gameObject.layer = 12;
+            _anim.SetInteger("AnimState", -1);
+            StartCoroutine(waitAnimation("SlimeChangeRailAnimLeft"));
+            btnR.enabled = false;
+            btnL.enabled = false;
+            btnM.enabled = true;
+        }
     }
 
 
     public void RightButton()
     {
-        btnL.enabled = false;
-        btnR.enabled = false;
-        btnM.enabled = true;
-        _anim.SetInteger("AnimState", 1);
-        StartCoroutine(waitAnimation(btnR, "SlimeChangeRailRight"));
+        if (_anim.GetCurrentAnimatorStateInfo(0).IsName("SlimeIdle"))
+        {
+            gameObject.layer = 12;
+            btnL.enabled = false;
+            btnR.enabled = false;
+            btnM.enabled = true;
+            _anim.SetInteger("AnimState", 1);
+            StartCoroutine(waitAnimation("SlimeChangeRailRight"));
+        }
     }
 
-    IEnumerator waitAnimation(Button btn, string stateName)
-    {
-        yield return new WaitUntil(() =>
-        {
-            return _anim.GetCurrentAnimatorStateInfo(0).IsName(stateName)
-            && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f;
-        });
-        _anim.SetInteger("AnimState", 0);
-        //player.anchoredPosition = new Vector3(btn.transform.position.x, player.anchoredPosition.y, 0);
-    }
+    void Update() { currentTime += Time.deltaTime; }
 
     IEnumerator waitAnimation(string stateName)
     {
+        currentTime = 0;
         yield return new WaitUntil(() =>
         {
             return _anim.GetCurrentAnimatorStateInfo(0).IsName(stateName)
-            && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f;
+            && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= .9f || currentTime > .8f;
         });
         _anim.SetInteger("AnimState", 0);
-        _end = true;
+        if (!_health.inHit)
+        {
+            gameObject.layer = 8;
+        }
     }
 
     public void ChangeRailSound()
     {
         _audio.PlayOneShot(SFX_changeRail);
     }
-
 }

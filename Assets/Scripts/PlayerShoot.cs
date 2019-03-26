@@ -12,12 +12,15 @@ public class PlayerShoot : MonoBehaviour
     public AudioClip sfx_shoot;
     AudioSource audioSource;
 
+    Animator _anim;
+
     public float shootCD = 0.4f; // CD = Cool Down
     float _shootCD;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        _anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -26,6 +29,24 @@ public class PlayerShoot : MonoBehaviour
     }
 
     public void Shoot()
+    {
+        if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Slime_ShootAnim"))
+        {
+            _anim.SetInteger("AnimState", 5);
+        }
+        //StartCoroutine(WaitAnimation());
+
+    }
+
+    /* IEnumerator WaitAnimation()
+    {
+        yield return new WaitUntil(()=>{
+            return _anim.GetCurrentAnimatorStateInfo(0).IsName("Slime_ShootAnim") && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f;
+        });
+        _anim.SetInteger("AnimState",0);
+    } */
+
+    public void IdleState()
     {
         if (shootCD < 0.4f)
         {
@@ -40,8 +61,9 @@ public class PlayerShoot : MonoBehaviour
             audioSource.PlayOneShot(sfx_shoot);
             Destroy(newBullet, 2f);
         }
-
+        _anim.SetInteger("AnimState", 0);
     }
+
 
     // Update is called once per frame
     void Update()

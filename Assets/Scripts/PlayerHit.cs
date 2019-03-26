@@ -31,7 +31,8 @@ public class PlayerHit : MonoBehaviour
     void Start()
     {
         start = sr.color;
-		end = new Color(start.r, start.g, start.b, 0);	
+		end = new Color(start.r, start.g, start.b, 0);
+        Destroy(gameObject, 3f);
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -43,7 +44,6 @@ public class PlayerHit : MonoBehaviour
             float y = Random.Range(-500f, -1000f);
             rb.AddRelativeForce(new Vector2(x, y) * force);
             Destroy(GetComponent<CapsuleCollider2D>());
-            Destroy(gameObject, 3f);
             t = 0;
             _interpolate = true;
             audioSource.PlayOneShot(sfx_hitPlayer[Random.Range(0,2)]);
@@ -56,7 +56,7 @@ public class PlayerHit : MonoBehaviour
         if(_interpolate)
         {
             t += Time.deltaTime;
-            sr.color = Color.Lerp(start, end, t);
+            sr.color = Color.Lerp(start, end, t*2);
         }
     }
 }

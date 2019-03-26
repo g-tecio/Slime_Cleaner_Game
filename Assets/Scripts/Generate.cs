@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Generate : MonoBehaviour
 {
-    public GameObject @object;
+    public GameObject[] @object;
     //public bool dirt;
     GameObject clone;
     public float speedForceDown;
@@ -29,7 +29,7 @@ public class Generate : MonoBehaviour
 
     void GenerateThings()
     {
-        clone = Instantiate(@object, transform.position, Quaternion.identity);
+        clone = Instantiate(@object[Random.Range(0, @object.Length)], transform.position, Quaternion.identity);
         clone.GetComponent<SpriteRenderer>().flipX = Random.value > 0.5f;
 
         var tempRB = clone.GetComponent<Rigidbody2D>();
